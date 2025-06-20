@@ -126,9 +126,9 @@
         /* Cards */
         .cards-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(4, minmax(240px, 260px));
             gap: 15px;
-            justify-items: center;
+            justify-content: center;
         }
 
         .channel-card {
@@ -287,13 +287,13 @@
         }
 
         .view.active {
-            display: grid;
+            display: block;
         }
 
         /* Responsive adjustments */
-        @media (min-width: 1100px) {
+        @media (max-width: 1100px) {
             .cards-container {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(auto-fit, minmax(240px, 260px));
             }
         }
 
