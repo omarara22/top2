@@ -35,12 +35,25 @@
 
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: white(--bg-color);
+            background-image: url('random-falling-gold-stars-png.webp');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
             color: var(--text-color);
             line-height: 1.6;
+            position: relative;
         }
-
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: rgba(255,255,255,0.7); /* white overlay, adjust opacity as needed */
+            pointer-events: none;
+        }
         .container {
+            position: relative;
+            z-index: 1;
             width: 100%;
             max-width: 1400px;
             margin: 0 auto;
@@ -67,7 +80,9 @@
 
         h2 {
             margin-bottom: 0;
-            font-size: 28px;
+            font-size: 36px; /* Increased font size */
+            font-weight: bold; /* Make it bold */
+            color: #222222;    /* Dark gray color */
         }
 
         h3 {
@@ -704,10 +719,43 @@
                 const imageContent = employee.image 
                     ? `<img src="${employee.image}" alt="${employee.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
                     : '';
-                
+
+                // Golden cup SVG
+                const goldenCupSVG = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:5px;" aria-label="Golden Cup">
+                        <path fill="#FFD700" d="M17 3V2a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1H2v4a5 5 0 0 0 5 5c.74 0 1.44-.13 2.09-.36A5.98 5.98 0 0 0 12 17.92V20H8v2h8v-2h-4v-2.08A5.98 5.98 0 0 0 14.91 12.64c.65.23 1.35.36 2.09.36a5 5 0 0 0 5-5V3h-5zm-9 6a3 3 0 0 1-3-3V5h3v4zm13-3a3 3 0 0 1-3 3V5h3v1z"/>
+                    </svg>
+                `;
+
+                // Add golden cup for specific top performers in their widgets
+                const goldenCupNames = [
+                    { name: "Asmaa EL Hamioui", channel: "social" },
+                    { name: "Rabia Ashraf", channel: "email" },
+                    { name: "Ibrahim Mohamed", channel: "chat" },
+                    { name: "Nada Tagelsir Eisa Ali", channel: "voice" }
+                ];
+
+                let channelNameHtml = `<div class="channel-name" style="color: ${channelConfig.color}">${channelConfig.name}</div>`;
+                if (
+                    goldenCupNames.some(
+                        (item) =>
+                            item.name.trim().toLowerCase() === employee.name.trim().toLowerCase() &&
+                            item.channel.trim().toLowerCase() === channelConfig.class.trim().toLowerCase()
+                    )
+                ) {
+                    channelNameHtml = `
+                        <div class="channel-name" style="position: relative; height: 24px;">
+                            <span style="position: absolute; left: 0; top: 0; display: flex; align-items: center;">
+                                ${goldenCupSVG}
+                            </span>
+                            <span style="position: absolute; left: 0; right: 0; top: 0; text-align: center; width: 100%; font-weight: 600; color: ${channelConfig.color};">${channelConfig.name}</span>
+                        </div>
+                    `;
+                }
+
                 card.innerHTML = `
                     <div style="text-align: center; margin-bottom: 10px;">
-                        ${showChannelName ? `<div class="channel-name" style="color: ${channelConfig.color}">${channelConfig.name}</div>` : ''}
+                        ${channelNameHtml}
                         <div class="profile-image ${channelConfig.class} ${medalClass}">
                             ${imageContent}
                         </div>
