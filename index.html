@@ -61,8 +61,8 @@
         }
 
         h2, h3, h4 {
-            color: green(--primary-color);
-            font-weight: 800;
+            color: var(--primary-color);
+            font-weight: 600;
         }
 
         h2 {
@@ -78,14 +78,14 @@
         h4 {
             font-size: 16px;
             font-weight: 500;
-            margin: 10px 0 15px;
+            margin: 10px 0 10px;
         }
 
         /* Channel title in cards */
         .channel-name {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             text-align: center;
         }
 
@@ -94,7 +94,7 @@
             display: flex;
             justify-content: center;
             gap: 30px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             flex-wrap: wrap;
         }
 
@@ -110,11 +110,12 @@
         }
 
         select {
-            padding: 8px 15px;
+            padding: 8px 12px;
             border-radius: 4px;
             border: 1px solid var(--primary-color);
             width: 100%;
             font-family: inherit;
+            font-size: 14px;
         }
 
         select:focus {
@@ -125,23 +126,23 @@
         /* Cards */
         .cards-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
             justify-items: center;
         }
 
         .channel-card {
             width: 100%;
-            max-width: 320px;
+            max-width: 260px;
             background: white;
             border-radius: 8px;
-            padding: 20px;
+            padding: 15px;
             box-shadow: 0 4px 12px rgba(0,91,170,0.1);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .channel-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
             box-shadow: 0 6px 16px rgba(0,91,170,0.15);
         }
 
@@ -162,9 +163,9 @@
         }
 
         .profile-image {
-            height: 100px;
-            width: 100px;
-            margin: 0 auto 15px;
+            height: 80px;
+            width: 80px;
+            margin: 0 auto 10px;
             border-radius: 50%;
             overflow: hidden;
             border: 3px solid;
@@ -194,16 +195,16 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
-            padding: 10px;
+            padding: 8px;
         }
 
         .metrics {
-            font-size: 13px;
-            padding: 0 10px;
+            font-size: 12px;
+            padding: 0 8px;
         }
 
         .metric-row {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: flex;
             justify-content: space-between;
         }
@@ -232,14 +233,15 @@
         .rank-badge {
             display: inline-flex;
             align-items: center;
+            font-size: 12px;
         }
 
         .rank-badge::before {
             content: "";
             display: inline-block;
-            width: 16px;
-            height: 16px;
-            margin-right: 5px;
+            width: 14px;
+            height: 14px;
+            margin-right: 4px;
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -261,15 +263,15 @@
         .loading {
             display: none;
             text-align: center;
-            padding: 20px;
+            padding: 15px;
         }
 
         .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
+            border: 3px solid rgba(0, 0, 0, 0.1);
             border-radius: 50%;
-            border-top: 4px solid var(--primary-color);
-            width: 40px;
-            height: 40px;
+            border-top: 3px solid var(--primary-color);
+            width: 30px;
+            height: 30px;
             animation: spin 1s linear infinite;
             margin: 0 auto 10px;
         }
@@ -289,10 +291,16 @@
         }
 
         /* Responsive adjustments */
+        @media (min-width: 1100px) {
+            .cards-container {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             .filters {
                 flex-direction: column;
-                gap: 15px;
+                gap: 12px;
             }
             
             .filter-group {
@@ -634,7 +642,7 @@
                 const rankClass = employee.channelRank <= 3 ? `rank-${employee.channelRank}` : '';
                 
                 card.innerHTML = `
-                    <div style="text-align: center; margin-bottom: 15px;">
+                    <div style="text-align: center; margin-bottom: 10px;">
                         ${showChannelName ? `<div class="channel-name" style="color: ${channelConfig.color}">${channelConfig.name}</div>` : ''}
                         <div class="profile-image ${channelConfig.class}">
                             <img src="${genderImg}" loading="lazy" alt="Profile photo of ${employee.name}">
