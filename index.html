@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Center Top Performers Dashboard</title>
+    <style>
+        :root {
+            --voice-color: #0072bc;
+            --voice-light: #f0f7fd;
+            --voice-border: #d9e9f7;
+            
+            --chat-color: #00a99d;
+            --chat-light: #e8f7f6;
+            --chat-border: #d6f2f0;
+            
+            --email-color: #6d2077;
+            --email-light: #f5eaf7;
+            --email-border: #ead8ed;
+            
+            --social-color: #ff9e1b;
+            --social-light: #fff5e6;
+            --social-border: #ffedcc;
+            
+            --primary-color: #005baa;
+            --text-color: #4a4a4a;
+            --bg-color: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: white(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .header-title {
+            flex-grow: 1;
+            padding: 0 20px;
+        }
+
+        h2, h3, h4 {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        h2 {
+            margin-bottom: 0;
+            font-size: 28px;
+        }
+
+        h3 {
+            font-size: 18px;
+            margin: 0 0 15px;
+        }
+
+        h4 {
+            font-size: 16px;
+            font-weight: 500;
+            margin: 10px 0 15px;
+        }
+
+        /* Channel title in cards */
+        .channel-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            min-width: 150px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        select {
+            padding: 8px 15px;
+            border-radius: 4px;
+            border: 1px solid var(--primary-color);
+            width: 100%;
+            font-family: inherit;
+        }
+
+        select:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* Cards */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            justify-items: center;
+        }
+
+        .channel-card {
+            width: 100%;
+            max-width: 320px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,91,170,0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .channel-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0,91,170,0.15);
+        }
+
+        .channel-card.voice {
+            border-top: 4px solid var(--voice-color);
+        }
+
+        .channel-card.chat {
+            border-top: 4px solid var(--chat-color);
+        }
+
+        .channel-card.email {
+            border-top: 4px solid var(--email-color);
+        }
+
+        .channel-card.social {
+            border-top: 4px solid var(--social-color);
+        }
+
+        .profile-image {
+            height: 100px;
+            width: 100px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid;
+        }
+
+        .profile-image.voice {
+            border-color: var(--voice-border);
+            background-color: var(--voice-light);
+        }
+
+        .profile-image.chat {
+            border-color: var(--chat-border);
+            background-color: var(--chat-light);
+        }
+
+        .profile-image.email {
+            border-color: var(--email-border);
+            background-color: var(--email-light);
+        }
+
+        .profile-image.social {
+            border-color: var(--social-border);
+            background-color: var(--social-light);
+        }
+
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 10px;
+        }
+
+        .metrics {
+            font-size: 13px;
+            padding: 0 10px;
+        }
+
+        .metric-row {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .metric-label {
+            font-weight: 500;
+        }
+
+        .metric-label.voice {
+            color: var(--voice-color);
+        }
+
+        .metric-label.chat {
+            color: var(--chat-color);
+        }
+
+        .metric-label.email {
+            color: var(--email-color);
+        }
+
+        .metric-label.social {
+            color: var(--social-color);
+        }
+
+        /* Rank badges with stars */
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .rank-badge::before {
+            content: "";
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 5px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .rank-1::before {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FFD700"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>');
+        }
+
+        .rank-2::before {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23C0C0C0"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>');
+        }
+
+        .rank-3::before {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23CD7F32"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>');
+        }
+
+        /* Loading state */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* View transitions */
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: grid;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .filters {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .filter-group {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" role="region" aria-labelledby="topPerformersHeading">
+        <!-- Header -->
+        <div class="header-container">
+            <div class="header-title">
+                <h2 id="topPerformersHeading">Contact Center Top Performers</h2>
+            </div>
+        </div>
+        
+        <!-- Loading state -->
+        <div id="loading" class="loading">
+            <div class="spinner" aria-hidden="true"></div>
+            <p>Loading performance data...</p>
+        </div>
+        
+        <!-- Filters -->
+        <div class="filters">
+            <div class="filter-group">
+                <label for="monthFilter">Select Month:</label>
+                <select id="monthFilter" aria-label="Select month to filter by">
+                    <option value="2025-05">May 2025</option>
+                    <option value="2025-04">April 2025</option>
+                    <option value="2025-03">March 2025</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="channelFilter">Select Channel:</label>
+                <select id="channelFilter" aria-label="Select channel to filter by">
+                    <option value="all">All channels</option>
+                    <option value="voice">Voice channel</option>
+                    <option value="chat">Chat Channel</option>
+                    <option value="email">Email Channel</option>
+                    <option value="social">Social Media Channel</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- All Channels View (Top 1 from each) -->
+        <div id="allChannelsView" class="view active">
+            <div class="cards-container">
+                <!-- Cards will be dynamically generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Single Channel View (Top 3) -->
+        <div id="singleChannelView" class="view">
+            <h3 id="channelTitle" class="channel-title"></h3>
+            <div class="cards-container">
+                <!-- Cards will be dynamically generated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class TopPerformersDashboard {
+            constructor() {
+                this.employeeData = {
+                    voice: [
+                        {
+                            name: "Nada Tagelsir Eisa Ali",
+                            stackRank: 5,
+                            channelRank: 1,
+                            finalScore: 1.4,
+                            aht: 230,
+                            qa: "98.17%",
+                            adherence: "98.44%",
+                            csat: 9.65,
+                            gender: "female"
+                        },
+                        {
+                            name: "Mohamed Bakheit",
+                            stackRank: 5,
+                            channelRank: 2,
+                            finalScore: 1.4,
+                            aht: 262,
+                            qa: "97.63%",
+                            adherence: "97.90%",
+                            csat: 9.27,
+                            gender: "male"
+                        },
+                        {
+                            name: "Faten Hesham Elwakeel",
+                            stackRank: 12,
+                            channelRank: 3,
+                            finalScore: 1.7,
+                            aht: 254,
+                            qa: "96.97%",
+                            adherence: "98.84%",
+                            csat: 9.55,
+                            gender: "female"
+                        }
+                    ],
+                    chat: [
+                        {
+                            name: "Ibrahim Mohamed",
+                            stackRank: 4,
+                            channelRank: 1,
+                            finalScore: 1.35,
+                            aht: 434,
+                            qa: "98.99%",
+                            adherence: "96.88%",
+                            csat: 9.62,
+                            gender: "male"
+                        },
+                        {
+                            name: "Gehad Mohamed Abdelazim",
+                            stackRank: 7,
+                            channelRank: 2,
+                            finalScore: 1.5,
+                            aht: 440,
+                            qa: "98.24%",
+                            adherence: "96.71%",
+                            csat: 10,
+                            gender: "female"
+                        },
+                        {
+                            name: "ARWA AHMED MANEA",
+                            stackRank: 12,
+                            channelRank: 3,
+                            finalScore: 1.7,
+                            aht: 434,
+                            qa: "98.70%",
+                            adherence: "97.28%",
+                            csat: 9.51,
+                            gender: "female"
+                        }
+                    ],
+                    email: [
+                        {
+                            name: "Rabia Ashraf",
+                            stackRank: 2,
+                            channelRank: 1,
+                            finalScore: 1.3,
+                            aht: 200,
+                            qa: "98.06%",
+                            adherence: "93.45%",
+                            csat: 10,
+                            gender: "female"
+                        },
+                        {
+                            name: "Abdalla mohamed abdelfadil",
+                            stackRank: 8,
+                            channelRank: 2,
+                            finalScore: 1.6,
+                            aht: 157,
+                            qa: "100.00%",
+                            adherence: "99.52%",
+                            csat: "",
+                            gender: "male"
+                        },
+                        {
+                            name: "Ryan Aramil Pakinggan",
+                            stackRank: 8,
+                            channelRank: 3,
+                            finalScore: 1.6,
+                            aht: 201,
+                            qa: "100.00%",
+                            adherence: "99.27%",
+                            csat: "",
+                            gender: "male"
+                        }
+                    ],
+                    social: [
+                        {
+                            name: "Asmaa EL Hamioui",
+                            stackRank: 1,
+                            channelRank: 1,
+                            finalScore: 1.1,
+                            aht: 607,
+                            qa: "98.79%",
+                            adherence: "97.64%",
+                            csat: 9.6,
+                            gender: "female"
+                        },
+                        {
+                            name: "Ahmed Abdullah Alhmmadi",
+                            stackRank: 3,
+                            channelRank: 2,
+                            finalScore: 1.3,
+                            aht: 533,
+                            qa: "99.50%",
+                            adherence: "96.88%",
+                            csat: 9.91,
+                            gender: "male"
+                        },
+                        {
+                            name: "Mandy Mustafa Suliman",
+                            stackRank: 8,
+                            channelRank: 3,
+                            finalScore: 1.6,
+                            aht: 764,
+                            qa: "98.48%",
+                            adherence: "97.58%",
+                            csat: "",
+                            gender: "female"
+                        }
+                    ]
+                };
+
+                this.channelConfig = {
+                    voice: {
+                        name: 'Voice Channel',
+                        color: 'var(--voice-color)',
+                        borderColor: 'var(--voice-border)',
+                        bgColor: 'var(--voice-light)',
+                        class: 'voice'
+                    },
+                    chat: {
+                        name: 'Chat Channel',
+                        color: 'var(--chat-color)',
+                        borderColor: 'var(--chat-border)',
+                        bgColor: 'var(--chat-light)',
+                        class: 'chat'
+                    },
+                    email: {
+                        name: 'Email Channel',
+                        color: 'var(--email-color)',
+                        borderColor: 'var(--email-border)',
+                        bgColor: 'var(--email-light)',
+                        class: 'email'
+                    },
+                    social: {
+                        name: 'Social Media',
+                        color: 'var(--social-color)',
+                        borderColor: 'var(--social-border)',
+                        bgColor: 'var(--social-light)',
+                        class: 'social'
+                    }
+                };
+
+                this.initElements();
+                this.initEventListeners();
+                this.renderAllChannelsView();
+            }
+
+            initElements() {
+                this.elements = {
+                    loading: document.getElementById('loading'),
+                    monthFilter: document.getElementById('monthFilter'),
+                    channelFilter: document.getElementById('channelFilter'),
+                    allChannelsView: document.getElementById('allChannelsView'),
+                    singleChannelView: document.getElementById('singleChannelView'),
+                    channelTitle: document.getElementById('channelTitle'),
+                    allChannelsContainer: document.querySelector('#allChannelsView .cards-container'),
+                    singleChannelContainer: document.querySelector('#singleChannelView .cards-container')
+                };
+            }
+
+            initEventListeners() {
+                this.elements.channelFilter.addEventListener('change', (e) => {
+                    this.handleChannelChange(e.target.value);
+                });
+
+                this.elements.monthFilter.addEventListener('change', (e) => {
+                    this.handleMonthChange(e.target.value);
+                });
+            }
+
+            handleChannelChange(channel) {
+                if (channel === 'all') {
+                    this.showAllChannelsView();
+                } else {
+                    this.showSingleChannelView(channel);
+                }
+            }
+
+            handleMonthChange(month) {
+                this.showLoading(true);
+                // Simulate API call with timeout
+                setTimeout(() => {
+                    console.log('Month changed to:', month);
+                    // In a real app, you would fetch new data here
+                    this.showLoading(false);
+                }, 500);
+            }
+
+            showLoading(show) {
+                this.elements.loading.style.display = show ? 'block' : 'none';
+            }
+
+            showAllChannelsView() {
+                this.elements.allChannelsView.classList.add('active');
+                this.elements.singleChannelView.classList.remove('active');
+            }
+
+            showSingleChannelView(channel) {
+                this.elements.allChannelsView.classList.remove('active');
+                this.elements.singleChannelView.classList.add('active');
+                
+                const config = this.channelConfig[channel];
+                this.elements.channelTitle.textContent = `${config.name} Top 3 Performers`;
+                this.elements.channelTitle.style.color = config.color;
+                
+                this.renderSingleChannelView(channel);
+            }
+
+            renderAllChannelsView() {
+                this.elements.allChannelsContainer.innerHTML = '';
+                
+                Object.keys(this.channelConfig).forEach(channel => {
+                    const topPerformer = this.employeeData[channel][0];
+                    if (topPerformer) {
+                        this.elements.allChannelsContainer.appendChild(
+                            this.createEmployeeCard(topPerformer, this.channelConfig[channel], true)
+                        );
+                    }
+                });
+            }
+
+            renderSingleChannelView(channel) {
+                this.elements.singleChannelContainer.innerHTML = '';
+                
+                const config = this.channelConfig[channel];
+                const employees = this.employeeData[channel];
+                
+                employees.forEach(employee => {
+                    this.elements.singleChannelContainer.appendChild(
+                        this.createEmployeeCard(employee, config, false)
+                    );
+                });
+            }
+
+            createEmployeeCard(employee, channelConfig, showChannelName) {
+                const card = document.createElement('div');
+                card.className = `channel-card ${channelConfig.class}`;
+                
+                const genderImg = employee.gender === 'male' ? 
+                    'https://cdn-icons-png.flaticon.com/512/1864/1864593.png' : 
+                    'https://cdn-icons-png.flaticon.com/512/1864/1864514.png';
+                
+                const rankClass = employee.channelRank <= 3 ? `rank-${employee.channelRank}` : '';
+                
+                card.innerHTML = `
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        ${showChannelName ? `<div class="channel-name" style="color: ${channelConfig.color}">${channelConfig.name}</div>` : ''}
+                        <div class="profile-image ${channelConfig.class}">
+                            <img src="${genderImg}" loading="lazy" alt="Profile photo of ${employee.name}">
+                        </div>
+                        <h4>${employee.name}</h4>
+                        <div class="metrics">
+                            <div class="metric-row">
+                                <span class="metric-label ${channelConfig.class}">Stack Rank:</span>
+                                <span class="rank-badge ${rankClass}">#${employee.stackRank}</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label ${channelConfig.class}">Channel Rank:</span>
+                                <span class="rank-badge ${rankClass}">#${employee.channelRank}</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label ${channelConfig.class}">Final Score:</span>
+                                <span>${employee.finalScore}</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label ${channelConfig.class}">AHT:</span>
+                                <span>${employee.aht} sec</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label ${channelConfig.class}">QA:</span>
+                                <span>${employee.qa}</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label ${channelConfig.class}">Adherence:</span>
+                                <span>${employee.adherence}</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label ${channelConfig.class}">CSAT:</span>
+                                <span>${employee.csat || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                return card;
+            }
+        }
+
+        // Initialize the dashboard when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new TopPerformersDashboard();
+        });
+    </script>
+</body>
+</html>
