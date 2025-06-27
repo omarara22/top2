@@ -35,10 +35,10 @@
 
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
-            background-image: url('random-falling-gold-stars-png.webp');
+            background-image: url('https://manaar.dha.gov.ae/en/pluginfile.php/1/theme_moove/sliderimage3/1750489995/DHA%20Vision-slider3.jpg');
             background-size: cover;
             background-repeat: no-repeat;
-            background-position: center center;
+            background-position: center center; /* This centers the background image */
             color: var(--text-color);
             line-height: 1.6;
             position: relative;
@@ -48,7 +48,7 @@
             position: fixed;
             inset: 0;
             z-index: 0;
-            background: rgba(255,255,255,0.7); /* white overlay, adjust opacity as needed */
+            background: rgba(255,255,255,0.7);
             pointer-events: none;
         }
         .container {
@@ -80,9 +80,9 @@
 
         h2 {
             margin-bottom: 0;
-            font-size: 36px; /* Increased font size */
-            font-weight: bold; /* Make it bold */
-            color: #222222;    /* Dark gray color */
+            font-size: 36px;
+            font-weight: bold;
+            color: #222222;
         }
 
         h3 {
@@ -339,8 +339,8 @@
         .channel-widgets-container {
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* or center if you want vertical centering */
-            gap: 20px; /* space between widgets */
+            align-items: flex-start;
+            gap: 20px;
         }
 
         /* Center widgets style */
@@ -348,8 +348,28 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            gap: 20px; /* optional: space between cards */
+            gap: 20px;
             flex-wrap: wrap;
+        }
+
+        /* Submit button style */
+        .submit-performer {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .submit-performer a {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .submit-performer a:hover {
+            background-color: #004a8a;
         }
 
         /* Responsive adjustments */
@@ -424,8 +444,8 @@
         </div>
 
         <!-- Submit New Performer Link -->
-        <div class="submit-performer" style="text-align: center; margin-top: 20px;">
-            <a href="submit_performer.html" id="submitLink" style="display:none;">Submit New Performer</a>
+        <div class="submit-performer">
+            <a href="https://teleperformance.sharepoint.com/sites/MOCDKnowledgeHub/SiteAssets/New%20folder/submit_Performer.html">Add New Performer</a>
         </div>
     </div>
 
@@ -713,9 +733,13 @@
                 
                 const rankClass = employee.channelRank <= 3 ? `rank-${employee.channelRank}` : '';
                 
+                const femaleAvatar = `
+                    <img src="female_avatar.png" alt="Female Arab Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                `;
+
                 const imageContent = employee.image 
                     ? `<img src="${employee.image}" alt="${employee.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
-                    : '';
+                    : (employee.gender === "female" ? femaleAvatar : maleAvatar);
 
                 // Golden cup SVG
                 const goldenCupSVG = `
@@ -800,7 +824,6 @@
         });
 
         // This uses SharePoint's user info if running on a SharePoint page
-        // Replace 'your.email@domain.com' with your actual email
         function showSubmitLinkForOwner() {
             // For classic SharePoint pages
             if (typeof _spPageContextInfo !== "undefined") {
